@@ -2,7 +2,7 @@
   "name": "codescribe",
   "displayName": "CodeScribe",
   "description": "An AI assistant for developers",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "engines": {
     "vscode": "^1.103.0"
   },

@@ -87,11 +87,11 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
 
     if (type === "branch") {
       endpoint =
-        "https://codescribe-backend-hihi33wfs-charanguttis-projects.vercel.app/api/generate-branch-name";
+        "https://codescribe-backend-m11ebqeub-charanguttis-projects.vercel.app/api/generate-branch-name";
     } else {
       // issue
       endpoint =
-        "https://codescribe-backend-hihi33wfs-charanguttis-projects.vercel.app/api/generate-issue-name";
+        "https://codescribe-backend-m11ebqeub-charanguttis-projects.vercel.app/api/generate-issue-name";
     }
 
     try {
@@ -113,10 +113,21 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  // FIXED: Correctly handles setting the loading state and clearing previous content.
   public setLoadingState(type: "commit" | "description", isLoading: boolean) {
-    if (type === "commit") this.state.isLoadingCommit = isLoading;
-    else this.state.isLoadingDescription = isLoading;
-    if (isLoading) this.setContent(type, ""); // Clear content on load
+    if (type === "commit") {
+      this.state.isLoadingCommit = isLoading;
+      if (isLoading) {
+        this.state.commit = ""; // Clear content directly
+      }
+    } else {
+      // description
+      this.state.isLoadingDescription = isLoading;
+      if (isLoading) {
+        // Reset to the default placeholder text, which is handled by the HTML logic
+        this.state.description = "AI-generated content will appear here.";
+      }
+    }
     this.updateView();
   }
 
@@ -323,13 +334,16 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
                         border-radius: 50%;
                         animation: spin 0.8s linear infinite;
                         transform: translate(-50%, -50%);
+                        z-index: 10;
                     }
 
-                    .loading {
-                        opacity: 0.6;
-                    }
                     .loading .spinner {
                         display: block;
+                    }
+
+                    .loading > *:not(.spinner) {
+                        opacity: 0.4;
+                        pointer-events: none;
                     }
 
                     @keyframes spin {
@@ -342,6 +356,7 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
                 <div class="container ${
                   state.isLoadingCommit ? "loading" : ""
                 }">
+                    <div class="spinner"></div>
                     <div class="label-container">
                         <div class="label">
                             ${icons.commit}
@@ -358,12 +373,12 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
         ? "AI-generated commit message will appear here."
         : state.commit
     }</textarea>
-                    <div class="spinner"></div>
                 </div>
 
                 <div class="container ${
                   state.isLoadingDescription ? "loading" : ""
                 }">
+                    <div class="spinner"></div>
                     <div class="label-container">
                         <div class="label">
                             ${icons.pr}
@@ -376,7 +391,6 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
                     <textarea id="pr-output" readonly class="${
                       isDescriptionPlaceholder ? "placeholder" : ""
                     }">${state.description}</textarea>
-                    <div class="spinner"></div>
                 </div>
 
                 <hr />
@@ -401,6 +415,7 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
                 <div class="container ${
                   state.isLoadingUtility ? "loading" : ""
                 }">
+                    <div class="spinner"></div>
                     <div class="label-container">
                         <div class="label">
                             ${icons.output}
@@ -415,7 +430,6 @@ class AiOutputsViewProvider implements vscode.WebviewViewProvider {
                     }" class="${
       !state.utilityOutput ? "placeholder" : ""
     }" placeholder="Generated name will appear here...">
-                    <div class="spinner"></div>
                 </div>
 
                 <script nonce="${nonce}">
@@ -574,7 +588,7 @@ export async function activate(context: vscode.ExtensionContext) {
         aiOutputsProvider.setLoadingState("commit", true);
         try {
           const backendUrl =
-            "https://codescribe-backend-hihi33wfs-charanguttis-projects.vercel.app/api/generate-commit";
+            "https://codescribe-backend-m11ebqeub-charanguttis-projects.vercel.app/api/generate-commit";
           const response = await axios.post(backendUrl, { diff });
           aiOutputsProvider.setContent("commit", response.data.commitMessage);
         } catch (error) {
@@ -594,7 +608,7 @@ export async function activate(context: vscode.ExtensionContext) {
         aiOutputsProvider.setLoadingState("description", true);
         try {
           const backendUrl =
-            "https://codescribe-backend-hihi33wfs-charanguttis-projects.vercel.app/api/generate-description";
+            "https://codescribe-backend-m11ebqeub-charanguttis-projects.vercel.app/api/generate-description";
           const response = await axios.post(backendUrl, { diff });
           aiOutputsProvider.setContent(
             "description",
