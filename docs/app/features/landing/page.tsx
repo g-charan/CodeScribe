@@ -2,353 +2,723 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@radix-ui/react-accordion";
-import React, { useState } from "react";
+} from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  Github,
+  Menu,
+  ChevronRight,
+  BookOpen,
+  Zap,
+  Settings,
+  Globe,
+  ArrowUpRight,
+  Copy,
+  Check,
+  Command,
+  Terminal,
+  Sparkles,
+  Code2,
+  GitBranch,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
 
-// Shadcn UI Component Imports (for your reference when setting up)
-// You would typically import these from your components/ui directory
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-
-// Mock Components for this single file (replace with your actual shadcn imports)
-
-// ---------------- ICONS (Self-contained SVG components) ----------------
-const SearchIcon = (props) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="11" cy="11" r="8"></circle>
-    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-  </svg>
+// Enhanced Logo Component
+const CodeScribeLogo = ({ className = "h-6 w-6", variant = "default" }) => (
+  <div className="flex items-center gap-2">
+    <div className={`${className} relative`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg opacity-10 blur-sm"></div>
+      <svg
+        className={`${className} relative z-10`}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M13 3L4 14h7l-1 8 9-11h-7l1-8z"
+          fill="url(#gradient)"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="rgb(59, 130, 246)" />
+            <stop offset="100%" stopColor="rgb(147, 51, 234)" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    {variant === "full" && (
+      <span className="font-semibold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        CodeScribe
+      </span>
+    )}
+  </div>
 );
 
-const CodeScribeLogo = ({ className }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M15.25 2a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0V3.64l-7.33 7.33a.75.75 0 1 1-1.06-1.06L13.44 2.5h-2.69a.75.75 0 0 1 0-1.5h3.5Z M4.75 22a.75.75 0 0 1-.75-.75v-3.5a.75.75 0 0 1 1.5 0v2.69l7.33-7.33a.75.75 0 1 1 1.06 1.06L6.56 21.5h2.69a.75.75 0 0 1 0 1.5h-3.5Z" />
-  </svg>
-);
-const MenuIcon = (props) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="4" x2="20" y1="12" y2="12"></line>
-    <line x1="4" x2="20" y1="6" y2="6"></line>
-    <line x1="4" x2="20" y1="18" y2="18"></line>
-  </svg>
+// Enhanced Search Component
+const SearchDialog = ({ isOpen, onClose }) => {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+
+  const mockResults = [
+    { title: "Getting Started", type: "Guide", path: "introduction" },
+    { title: "Commit Messages", type: "Feature", path: "commit-messages" },
+    { title: "Installation", type: "Setup", path: "installation" },
+    { title: "API Reference", type: "Reference", path: "api" },
+  ];
+
+  useEffect(() => {
+    if (query.trim()) {
+      setResults(
+        mockResults.filter((item) =>
+          item.title.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    } else {
+      setResults([]);
+    }
+  }, [query]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center pt-[10vh]">
+      <div className="bg-background rounded-xl shadow-2xl border w-full max-w-2xl mx-4 overflow-hidden">
+        <div className="flex items-center border-b px-4">
+          <Search className="h-4 w-4 text-muted-foreground mr-3" />
+          <Input
+            placeholder="Search documentation..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="border-0 focus-visible:ring-0 h-12"
+            autoFocus
+          />
+          <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium text-muted-foreground ml-2">
+            ESC
+          </kbd>
+        </div>
+        {results.length > 0 && (
+          <div className="max-h-96 overflow-y-auto p-2">
+            {results.map((result, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted cursor-pointer"
+              >
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium">{result.title}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {result.type}
+                  </div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="border-t p-3 text-xs text-muted-foreground flex items-center justify-between">
+          <div>Type to search</div>
+          <div className="flex items-center gap-4">
+            <kbd className="inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs">
+              <Command className="h-3 w-3" />K
+            </kbd>
+            <span>to open</span>
+          </div>
+        </div>
+      </div>
+      <div className="fixed inset-0 -z-10" onClick={onClose}></div>
+    </div>
+  );
+};
+
+// Copy Code Button Component
+const CopyButton = ({ code }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={handleCopy}
+      className="absolute top-2 right-2 h-8 w-8 p-0"
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+    </Button>
+  );
+};
+
+// Code Block Component
+const CodeBlock = ({ children, language = "bash", title }) => (
+  <div className="group relative">
+    {title && (
+      <div className="flex items-center gap-2 px-4 py-2 border-b bg-muted/50 text-sm font-mono">
+        <Terminal className="h-3 w-3" />
+        {title}
+      </div>
+    )}
+    <div className="relative bg-muted/30 border rounded-lg overflow-hidden">
+      <pre className="p-4 text-sm font-mono overflow-x-auto">
+        <code>{children}</code>
+      </pre>
+      <CopyButton code={children} />
+    </div>
+  </div>
 );
 
-const GithubIcon = ({ className }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-  </svg>
-);
-
-const FeatureIcon1 = ({ className }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 2a10 10 0 1 0 10 10" />
-    <path d="m16.24 7.76-2.12 2.12" />
-    <path d="M12 12h.01" />
-  </svg>
-);
-
-const FeatureIcon2 = ({ className }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="m12 3-1.41 1.41L16.17 10H4v4h12.17l-5.58 5.59L12 21l8-8-8-8z" />
-  </svg>
-);
-
-const FeatureIcon3 = ({ className }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <path d="M9 3v18" />
-  </svg>
-);
-
-// ---------------- PAGE SECTIONS ----------------
-
-const Header = () => (
-  <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-    <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-      <a href="#" className="flex items-center gap-2">
-        {" "}
-        {/* Replace with Next.js Link */}
-        <CodeScribeLogo className="h-6 w-6" />
-        <span className="font-bold text-lg">CodeScribe</span>
-      </a>
-      <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-        <a
-          href="#features"
-          className="text-muted-foreground transition-colors hover:text-foreground"
+// Feature Card Component
+const FeatureCard = ({ icon: Icon, title, description, href, badge }) => (
+  <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 border-muted/50 hover:border-primary/20">
+    <CardHeader>
+      <div className="flex items-center justify-between">
+        <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Icon className="h-5 w-5 text-primary" />
+        </div>
+        {badge && <Badge variant="secondary">{badge}</Badge>}
+      </div>
+      <CardTitle className="text-lg">{title}</CardTitle>
+      <CardDescription className="leading-relaxed">
+        {description}
+      </CardDescription>
+    </CardHeader>
+    {href && (
+      <CardContent className="pt-0">
+        <Button
+          variant="ghost"
+          className="p-0 h-auto font-normal text-primary hover:text-primary/80"
         >
-          Features
+          Learn more <ArrowUpRight className="h-3 w-3 ml-1" />
+        </Button>
+      </CardContent>
+    )}
+  </Card>
+);
+
+// Navigation Components
+const NavigationHeader = ({ onSearchOpen, onNavigate, currentPage }) => (
+  <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="container mx-auto flex h-16 items-center">
+      <div className="mr-4 hidden md:flex">
+        <button
+          onClick={() => onNavigate("home")}
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
+          <CodeScribeLogo variant="full" />
+        </button>
+      </div>
+
+      <nav className="flex items-center space-x-6 text-sm font-medium">
+        <button
+          onClick={() => onNavigate("docs")}
+          className={`transition-colors hover:text-foreground/80 ${
+            currentPage === "docs" ? "text-foreground" : "text-foreground/60"
+          }`}
+        >
+          Documentation
+        </button>
+        <a
+          href="#"
+          className="text-foreground/60 transition-colors hover:text-foreground/80"
+        >
+          Examples
         </a>
         <a
-          href="#docs"
-          className="text-muted-foreground transition-colors hover:text-foreground"
+          href="#"
+          className="text-foreground/60 transition-colors hover:text-foreground/80"
         >
-          Docs
-        </a>
-        <a
-          href="#faq"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          FAQ
+          Changelog
         </a>
       </nav>
-      <div className="flex items-center gap-2">
+
+      <div className="flex flex-1 items-center justify-end space-x-2">
+        <Button
+          variant="outline"
+          className="relative h-9 w-full justify-start text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64"
+          onClick={onSearchOpen}
+        >
+          <Search className="mr-2 h-4 w-4" />
+          Search docs...
+          <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
+            <Command className="h-3 w-3" />K
+          </kbd>
+        </Button>
+
         <Button variant="ghost" size="sm" asChild>
           <a
             href="https://github.com/your-repo/codescribe"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <GithubIcon className="h-4 w-4" />
+            <Github className="h-4 w-4" />
             <span className="sr-only">GitHub</span>
           </a>
         </Button>
-        <Button size="sm">Install Extension</Button>
       </div>
     </div>
   </header>
 );
 
-// const HeroSection = () => (
-//   <section className="pt-32 pb-20 text-center">
-//     <div className="container mx-auto px-4 md:px-6">
-//       <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4">
-//         Effortless Git Workflow.
-//       </h1>
-//       <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
-//         CodeScribe is an AI-powered VS Code extension that automates writing
-//         commit messages, PR descriptions, branch names, and more. Focus on
-//         coding, not on writing about it.
-//       </p>
-//       <div className="flex justify-center gap-4">
-//         <Button size="lg">Get Started</Button>
-//         <Button size="lg" variant="outline">
-//           <GithubIcon className="h-4 w-4 mr-2" />
-//           View on GitHub
-//         </Button>
-//       </div>
-//     </div>
-//   </section>
-// );
+// Sidebar Navigation
+const DocsSidebar = ({ activeDoc, setActiveDoc }) => {
+  const navigation = [
+    {
+      title: "Getting Started",
+      items: [
+        { id: "introduction", title: "Introduction", icon: BookOpen },
+        { id: "installation", title: "Installation", icon: Settings },
+        { id: "quick-start", title: "Quick Start", icon: Zap },
+      ],
+    },
+    {
+      title: "Core Features",
+      items: [
+        { id: "commit-messages", title: "Commit Messages", icon: GitBranch },
+        { id: "pr-descriptions", title: "PR Descriptions", icon: FileText },
+        { id: "branch-naming", title: "Branch Naming", icon: Code2 },
+      ],
+    },
+    {
+      title: "Advanced",
+      items: [
+        { id: "configuration", title: "Configuration", icon: Settings },
+        { id: "api-reference", title: "API Reference", icon: Terminal },
+      ],
+    },
+  ];
 
-const FeaturesSection = () => (
-  <section id="features" className="py-20 bg-muted/40">
-    <div className="container mx-auto px-4 md:px-6">
-      <div className="text-center mb-12">
+  return (
+    <aside className="fixed top-16 z-30 -ml-2 hidden h-[calc(100vh-4rem)] w-full shrink-0 md:sticky md:block">
+      <div className="relative overflow-hidden h-full py-6 pr-6 lg:py-8">
+        <div className="h-full w-full rounded-[inherit]">
+          <nav className="relative h-full w-full">
+            {navigation.map((section, i) => (
+              <div key={section.title} className={i > 0 ? "mt-8" : ""}>
+                <h4 className="mb-3 text-sm font-semibold text-foreground">
+                  {section.title}
+                </h4>
+                <div className="grid grid-flow-row auto-rows-max text-sm">
+                  {section.items.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveDoc(item.id)}
+                      className={`group flex items-center rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors ${
+                        activeDoc === item.id
+                          ? "bg-accent text-accent-foreground font-semibold"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </aside>
+  );
+};
+
+// Documentation Content
+const DocsContent = ({ activeDoc }) => {
+  const docs = {
+    introduction: (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight">Introduction</h1>
+          <p className="text-xl text-muted-foreground">
+            AI-powered VS Code extension that automates your Git workflow with
+            intelligent commit messages, PR descriptions, and branch naming.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary">v2.1.0</Badge>
+          <Badge variant="outline">Stable</Badge>
+        </div>
+        <Separator />
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          <p>
+            CodeScribe eliminates the friction of writing about your code by
+            leveraging large language models to analyze your staged Git changes
+            and generate high-quality, conventional commit messages, detailed
+            pull request descriptions, and meaningful branch names.
+          </p>
+          <h3>Why CodeScribe?</h3>
+          <p>
+            Modern development workflows require consistent, descriptive commit
+            messages and documentation. CodeScribe ensures your Git history
+            remains clean and informative without interrupting your flow state.
+          </p>
+          <div className="grid md:grid-cols-2 gap-4 not-prose my-8">
+            <FeatureCard
+              icon={Sparkles}
+              title="AI-Powered Generation"
+              description="Leverages Google Gemini to analyze your code changes and generate contextually relevant text."
+            />
+            <FeatureCard
+              icon={Zap}
+              title="Seamless Integration"
+              description="Works directly in VS Code sidebar - no context switching or external tools required."
+            />
+            <FeatureCard
+              icon={Settings}
+              title="Highly Configurable"
+              description="Customize prompts, conventions, and AI models to match your team's workflow."
+            />
+            <FeatureCard
+              icon={Globe}
+              title="Privacy Focused"
+              description="Your code diffs are processed securely through your own backend deployment."
+            />
+          </div>
+        </div>
+      </div>
+    ),
+    installation: (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight">Installation</h1>
+          <p className="text-xl text-muted-foreground">
+            Get CodeScribe running in your VS Code environment in under 2
+            minutes.
+          </p>
+        </div>
+        <Tabs defaultValue="marketplace" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="marketplace">VS Code Marketplace</TabsTrigger>
+            <TabsTrigger value="manual">Manual Installation</TabsTrigger>
+          </TabsList>
+          <TabsContent value="marketplace" className="space-y-4 pt-4">
+            <div className="prose prose-neutral dark:prose-invert max-w-none">
+              <p>
+                Install directly from the Visual Studio Code Marketplace for the
+                most stable experience.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-semibold">
+                  1
+                </div>
+                <div>
+                  <p className="font-medium">Open VS Code Extensions</p>
+                  <p className="text-sm text-muted-foreground">
+                    Press <kbd>Ctrl+Shift+X</kbd> (Windows/Linux) or{" "}
+                    <kbd>Cmd+Shift+X</kbd> (Mac)
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-semibold">
+                  2
+                </div>
+                <div>
+                  <p className="font-medium">Search for "CodeScribe"</p>
+                  <p className="text-sm text-muted-foreground">
+                    Look for the extension published by your team.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-semibold">
+                  3
+                </div>
+                <div>
+                  <p className="font-medium">Click Install</p>
+                  <p className="text-sm text-muted-foreground">
+                    The extension will be activated automatically.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="manual" className="space-y-4 pt-4">
+            <div className="prose prose-neutral dark:prose-invert max-w-none">
+              <p>
+                For development or testing purposes, you can install from a VSIX
+                file.
+              </p>
+            </div>
+            <CodeBlock language="bash" title="Terminal">
+              {`# Package the extension
+vsce package
+
+# Install the generated VSIX file
+code --install-extension codescribe-*.vsix`}
+            </CodeBlock>
+            <div className="rounded-lg border bg-muted/50 p-4">
+              <div className="flex items-center gap-2 text-sm font-medium mb-2">
+                <Settings className="h-4 w-4" />
+                Configuration Required
+              </div>
+              <p className="text-sm text-muted-foreground">
+                After installation, you'll need to configure your API keys and
+                backend endpoint. See the 'Configuration' section for details.
+              </p>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    ),
+    "commit-messages": (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight">Commit Messages</h1>
+          <p className="text-xl text-muted-foreground">
+            Generate conventional, descriptive commit messages from your staged
+            changes automatically.
+          </p>
+        </div>
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          <h3>How it Works</h3>
+          <p>
+            CodeScribe analyzes your staged Git changes and generates commit
+            messages that follow conventional commit standards. The AI
+            understands context, identifies the type of changes, and creates
+            concise yet descriptive messages.
+          </p>
+          <h3>Usage</h3>
+          <ol>
+            <li>
+              Stage your changes using <code>git add</code> or VS Code's Git
+              panel.
+            </li>
+            <li>Open the CodeScribe sidebar in VS Code.</li>
+            <li>Click the ✨ icon next to "Generate Commit Message".</li>
+            <li>Review and optionally edit the generated message.</li>
+            <li>Commit directly from the extension or copy to Git panel.</li>
+          </ol>
+          <h3>Example Output</h3>
+        </div>
+        <div className="space-y-4">
+          <CodeBlock language="text" title="Generated Commit Message">
+            {`feat(auth): implement OAuth2 Google sign-in
+
+- Add Google OAuth2 configuration
+- Create user authentication middleware
+- Update login page with Google sign-in button
+- Add user session management
+
+Closes #123`}
+          </CodeBlock>
+        </div>
+      </div>
+    ),
+    "quick-start": (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight">Quick Start</h1>
+          <p className="text-xl text-muted-foreground">
+            Get up and running with CodeScribe in your first project.
+          </p>
+        </div>
+        <div className="prose prose-neutral dark:prose-invert max-w-none">
+          <h3>Prerequisites</h3>
+          <ul>
+            <li>VS Code 1.74.0 or higher</li>
+            <li>Git repository initialized</li>
+            <li>Google Cloud API key (free tier available)</li>
+          </ul>
+          <h3>First Commit Message</h3>
+          <p>Let's generate your first AI-powered commit message:</p>
+        </div>
+        <div className="space-y-6">
+          <div className="flex items-start gap-4">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-semibold">
+              1
+            </div>
+            <div className="space-y-2 flex-1">
+              <h4 className="font-semibold">Make changes to your code</h4>
+              <CodeBlock language="javascript" title="example.js">
+                {`function greetUser(name) {
+  return \`Hello, \${name}!\`;
+}
+
+export default greetUser;`}
+              </CodeBlock>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-semibold">
+              2
+            </div>
+            <div className="space-y-2 flex-1">
+              <h4 className="font-semibold">Stage your changes</h4>
+              <CodeBlock language="bash">{`git add example.js`}</CodeBlock>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-semibold">
+              3
+            </div>
+            <div className="space-y-2 flex-1">
+              <h4 className="font-semibold">Open CodeScribe and generate</h4>
+              <p className="text-muted-foreground">
+                Click the CodeScribe icon in your VS Code sidebar, then click
+                the ✨ button to generate a commit message.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-semibold">
+              4
+            </div>
+            <div className="space-y-2 flex-1">
+              <h4 className="font-semibold">Result</h4>
+              <CodeBlock language="text">
+                {`feat: add user greeting function
+
+Create greetUser function with template literal
+for personalized user messages`}
+              </CodeBlock>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-lg border bg-green-50 dark:bg-green-950/50 p-4">
+          <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300 mb-2">
+            <Check className="h-4 w-4" />
+            Success!
+          </div>
+          <p className="text-sm text-green-600 dark:text-green-400">
+            You've generated your first AI-powered commit message. The extension
+            is now ready for your daily workflow.
+          </p>
+        </div>
+      </div>
+    ),
+  };
+  return (
+    docs[activeDoc] || (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold mb-2">Page not found</h2>
+        <p className="text-muted-foreground">
+          The requested documentation page could not be found.
+        </p>
+      </div>
+    )
+  );
+};
+
+// Landing Page Components
+const HeroSection = ({ onNavigate }) => (
+  <section className="container mx-auto px-4 py-24 md:py-32">
+    <div className="max-w-4xl mx-auto text-center space-y-8">
+      <div className="space-y-4">
+        <Badge variant="outline" className="text-sm font-normal">
+          ✨ AI-Powered Git Workflow
+        </Badge>
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">
+          Effortless Git Workflow
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          CodeScribe automates writing commit messages, PR descriptions, and
+          branch names. Focus on coding, not on writing about it.
+        </p>
+      </div>
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <Button
+          size="lg"
+          onClick={() => onNavigate("docs")}
+          className="text-base px-8"
+        >
+          Get Started
+        </Button>
+        <Button size="lg" variant="outline" asChild className="text-base px-8">
+          <a
+            href="https://github.com/your-repo/codescribe"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Github className="mr-2 h-4 w-4" />
+            View on GitHub
+          </a>
+        </Button>
+      </div>
+    </div>
+  </section>
+);
+
+const FeaturesGrid = () => (
+  <section className="container mx-auto px-4 py-24">
+    <div className="max-w-6xl mx-auto">
+      <div className="text-center mb-16 space-y-4">
         <h2 className="text-3xl md:text-4xl font-bold">
-          As Little Hassle as Possible
+          Everything you need for a better Git workflow
         </h2>
-        <p className="max-w-xl mx-auto text-muted-foreground mt-2">
-          CodeScribe streamlines the most tedious parts of your development
-          cycle.
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Streamline the most tedious parts of your development cycle with
+          AI-powered automation.
         </p>
       </div>
       <div className="grid md:grid-cols-3 gap-8">
-        <Card>
-          <CardHeader>
-            <FeatureIcon1 className="h-8 w-8 text-primary mb-2" />
-            <CardTitle>Automated Messaging</CardTitle>
-            <CardDescription>
-              Generate clear, conventional commit messages and detailed PR
-              descriptions instantly from your staged changes.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <FeatureIcon2 className="h-8 w-8 text-primary mb-2" />
-            <CardTitle>Smart Naming</CardTitle>
-            <CardDescription>
-              Create descriptive, well-formatted branch names and issue titles
-              from a simple description or your code changes.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <FeatureIcon3 className="h-8 w-8 text-primary mb-2" />
-            <CardTitle>Seamless Integration</CardTitle>
-            <CardDescription>
-              Lives in your VS Code sidebar. No context switching. Just stage
-              your files, click, and get what you need.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <FeatureCard
+          icon={Sparkles}
+          title="Smart Commit Messages"
+          description="Generate conventional commit messages that perfectly describe your staged changes with proper scope and type detection."
+          badge="Core"
+        />
+        <FeatureCard
+          icon={FileText}
+          title="Detailed PR Descriptions"
+          description="Create comprehensive pull request descriptions with change summaries, testing instructions, and impact analysis."
+        />
+        <FeatureCard
+          icon={GitBranch}
+          title="Intelligent Branch Naming"
+          description="Get descriptive, well-formatted branch names that follow your team's conventions from simple descriptions."
+        />
+        <FeatureCard
+          icon={Code2}
+          title="Code Analysis"
+          description="Deep understanding of your code changes with context-aware suggestions and conventional commit standards."
+        />
+        <FeatureCard
+          icon={Settings}
+          title="Highly Configurable"
+          description="Customize prompts, AI models, and output formats to match your team's workflow and standards perfectly."
+        />
+        <FeatureCard
+          icon={Terminal}
+          title="VS Code Native"
+          description="Fully integrated into VS Code sidebar with keyboard shortcuts and seamless Git workflow integration."
+        />
       </div>
     </div>
   </section>
 );
 
-const DocsSection = () => (
-  <section id="docs" className="py-20">
-    <div className="container mx-auto px-4 md:px-6">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold">
-          Understandable & Unobtrusive
-        </h2>
-        <p className="max-w-xl mx-auto text-muted-foreground mt-2">
-          A quick guide to getting the most out of CodeScribe.
-        </p>
-      </div>
-      <div className="grid md:grid-cols-[240px_1fr] gap-12">
-        <aside className="hidden md:block">
-          <nav className="sticky top-20 flex flex-col gap-2">
-            <a href="#docs-introduction" className="font-semibold text-primary">
-              Introduction
-            </a>
-            <a
-              href="#docs-installation"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Installation
-            </a>
-            <a
-              href="#docs-usage"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Usage
-            </a>
-            <a
-              href="#docs-features"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Features
-            </a>
-          </nav>
-        </aside>
-        <main className="prose prose-stone dark:prose-invert max-w-none">
-          <article id="docs-introduction">
-            <h3>Introduction</h3>
-            <p>
-              CodeScribe is a VS Code extension designed to minimize the
-              friction of writing about your code. It uses large language models
-              to analyze your staged Git changes and generate high-quality text
-              for your commits, pull requests, and more. This documentation will
-              guide you through the setup and usage.
-            </p>
-          </article>
-          <article id="docs-installation" className="mt-12">
-            <h3>Installation</h3>
-            <p>
-              You can install CodeScribe directly from the Visual Studio
-              Marketplace, or by sideloading the <code>.vsix</code> file for
-              development purposes.
-            </p>
-            <div className="bg-muted rounded-md p-4 font-mono text-sm">
-              <code>
-                vsce package && code --install-extension codescribe-*.vsix
-              </code>
-            </div>
-          </article>
-          <article id="docs-usage" className="mt-12">
-            <h3>Usage</h3>
-            <p>
-              Once installed, you'll see the CodeScribe icon in your VS Code
-              Activity Bar. Open it to reveal the sidebar.
-            </p>
-            <ol>
-              <li>Make changes to your code in a Git repository.</li>
-              <li>
-                Stage your changes using <code>git add .</code> or the VS Code
-                UI.
-              </li>
-              <li>
-                The "Staged Changes" panel in the CodeScribe sidebar will
-                update.
-              </li>
-              <li>
-                Click the ✨ or 📝 icons to generate a commit message or PR
-                description.
-              </li>
-              <li>Use the "Utilities" section for branch and issue names.</li>
-            </ol>
-          </article>
-        </main>
-      </div>
-    </div>
-  </section>
-);
-
-const FaqSection = () => (
-  <section id="faq" className="py-20 bg-muted/40">
-    <div className="container max-w-3xl mx-auto px-4 md:px-6">
-      <div className="text-center mb-12">
+const FAQSection = () => (
+  <section className="container mx-auto px-4 py-24">
+    <div className="max-w-4xl mx-auto">
+      <div className="text-center mb-16 space-y-4">
         <h2 className="text-3xl md:text-4xl font-bold">
           Frequently Asked Questions
         </h2>
@@ -356,29 +726,40 @@ const FaqSection = () => (
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
           <AccordionTrigger>
-            Is my code sent to a third-party server?
+            How does CodeScribe handle my code privacy?
           </AccordionTrigger>
           <AccordionContent>
-            Yes. To generate text, the `git diff` of your staged changes is sent
-            to your own Vercel backend, which then queries the Google Gemini
-            API. Your code is not stored or logged.
+            CodeScribe processes your code diffs through your own backend
+            deployment. Your code never leaves your infrastructure, and we use
+            secure API calls to Google's Gemini API with your own API keys.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
-          <AccordionTrigger>Is it free to use?</AccordionTrigger>
+          <AccordionTrigger>
+            Which AI models does CodeScribe support?
+          </AccordionTrigger>
           <AccordionContent>
-            CodeScribe is free for personal use. The underlying Google Gemini
-            API has a generous free tier, but heavy usage may require you to set
-            up billing on your Google Cloud account.
+            Currently, CodeScribe supports Google's Gemini models. We're working
+            on adding support for OpenAI GPT models and local models like Ollama
+            in future updates.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
-          <AccordionTrigger>What AI model does it use?</AccordionTrigger>
+          <AccordionTrigger>
+            Can I customize the commit message format?
+          </AccordionTrigger>
           <AccordionContent>
-            By default, it uses Google's `gemini-1.5-flash` for speed and
-            efficiency. The codebase can be easily modified to use more powerful
-            models like `gemini-1.5-pro` for handling larger, more complex code
-            changes.
+            Yes! CodeScribe is highly configurable. You can customize prompts,
+            commit conventions, and output formats through the extension
+            settings or a configuration file.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-4">
+          <AccordionTrigger>Is there a free tier available?</AccordionTrigger>
+          <AccordionContent>
+            CodeScribe itself is free and open-source. You'll need to provide
+            your own Google Cloud API key, which offers a generous free tier
+            that should be sufficient for most developers.
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -386,270 +767,99 @@ const FaqSection = () => (
   </section>
 );
 
-const Footer = () => (
-  <footer className="border-t">
-    <div className="container mx-auto flex items-center justify-between py-6 px-4 md:px-6 text-sm text-muted-foreground">
-      <p>&copy; {new Date().getFullYear()} CodeScribe. All Rights Reserved.</p>
-      <div className="flex items-center gap-4">
-        <a href="#" className="hover:text-foreground">
-          Twitter
-        </a>
-        <a
-          href="https://github.com/your-repo/codescribe"
-          className="hover:text-foreground"
-        >
-          GitHub
-        </a>
+const CTA = ({ onNavigate }) => (
+  <section className="container mx-auto px-4 py-24">
+    <div className="max-w-4xl mx-auto text-center space-y-8">
+      <div className="space-y-4">
+        <h2 className="text-3xl md:text-4xl font-bold">
+          Ready to transform your Git workflow?
+        </h2>
       </div>
-    </div>
-  </footer>
-);
-
-// ---------------- MAIN PAGE COMPONENT ----------------
-
-const LandingHeader = ({ onNavigateToDocs }) => (
-  <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-    <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-      <a href="#" className="flex items-center gap-2 cursor-pointer">
-        <CodeScribeLogo className="h-6 w-6" />
-        <span className="font-bold text-lg">CodeScribe</span>
-      </a>
-      <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-        <button
-          onClick={onNavigateToDocs}
-          className="text-muted-foreground transition-colors hover:text-foreground"
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <Button
+          size="lg"
+          onClick={() => onNavigate("docs")}
+          className="text-base px-8"
         >
-          Docs
-        </button>
-      </nav>
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" asChild>
+          Install Now
+        </Button>
+        <Button size="lg" variant="outline" asChild className="text-base px-8">
           <a
             href="https://github.com/your-repo/codescribe"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <GithubIcon className="h-4 w-4" />
-            <span className="sr-only">GitHub</span>
+            <Github className="mr-2 h-4 w-4" />
+            Star on GitHub
           </a>
-        </Button>
-        <Button size="sm">Install Extension</Button>
-      </div>
-    </div>
-  </header>
-);
-
-const HeroSection = () => (
-  <section className="pt-32 pb-20 text-center">
-    <div className="container mx-auto px-4 md:px-6">
-      <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4">
-        Effortless Git Workflow.
-      </h1>
-      <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
-        CodeScribe is an AI-powered VS Code extension that automates writing
-        commit messages, PR descriptions, and more. Focus on coding, not on
-        writing about it.
-      </p>
-      <div className="flex justify-center gap-4">
-        <Button size="lg">Get Started</Button>
-        <Button size="lg" variant="outline">
-          <GithubIcon className="h-4 w-4 mr-2" /> View on GitHub
         </Button>
       </div>
     </div>
   </section>
 );
 
-// ... other landing page sections like Features, FAQ, Footer would go here ...
+// Main App Component
+export default function CodeScribeLanding() {
+  const [currentPage, setCurrentPage] = useState("home");
+  const [activeDoc, setActiveDoc] = useState("introduction");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-const LandingPage = ({ onNavigateToDocs }) => (
-  <>
-    <LandingHeader onNavigateToDocs={onNavigateToDocs} />
-    <main>
-      <HeroSection />
-      {/* You would include <FeaturesSection />, <FaqSection /> etc. here */}
-    </main>
-    {/* You would include <Footer /> here */}
-  </>
-);
-
-// ---------------- DOCUMENTATION PAGE COMPONENTS ----------------
-// To be moved to e.g., components/docs/
-
-const DocsHeader = ({ onNavigateToHome }) => (
-  <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
-    <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={onNavigateToHome}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <CodeScribeLogo className="h-6 w-6" />
-          <span className="font-bold text-lg">CodeScribe</span>
-        </button>
-      </div>
-      <div className="flex flex-1 items-center justify-end gap-4">
-        <div className="relative w-full max-w-sm hidden md:block">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="search"
-            placeholder="Search documentation..."
-            className="pl-9 w-full h-9 rounded-md border bg-muted"
-          />
-        </div>
-        <Button variant="ghost" size="sm" asChild>
-          <a
-            href="https://github.com/your-repo/codescribe"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GithubIcon className="h-4 w-4" />
-            <span className="sr-only">GitHub</span>
-          </a>
-        </Button>
-        <Button className="md:hidden" variant="ghost" size="sm">
-          <MenuIcon className="h-5 w-5" />
-        </Button>
-      </div>
-    </div>
-  </header>
-);
-
-const DocsSidebar = ({ doc, setDoc }) => {
-  const navItems = {
-    "Getting Started": {
-      introduction: "Introduction",
-      installation: "Installation",
-    },
-    Usage: {
-      "commit-messages": "Commit Messages",
-      "pr-descriptions": "PR Descriptions",
-      "name-generation": "Name Generation",
-    },
+  const handleNavigate = (page) => {
+    setCurrentPage(page);
+    if (page === "docs") {
+      setActiveDoc("introduction");
+    }
+    window.scrollTo(0, 0); // Scroll to top on page change
   };
+
+  const handleSearchOpen = () => setIsSearchOpen(true);
+  const handleSearchClose = () => setIsSearchOpen(false);
+
+  // Handle keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+        event.preventDefault();
+        setIsSearchOpen(true);
+      }
+      if (event.key === "Escape") {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
-    <aside className="fixed top-16 z-30 hidden h-[calc(100vh-4rem)] w-full shrink-0 md:sticky md:block md:w-64">
-      <div className="h-full py-6 pr-6 lg:py-8">
-        <nav className="flex flex-col gap-4">
-          {Object.entries(navItems).map(([category, items]) => (
-            <div key={category}>
-              <h4 className="font-bold mb-2">{category}</h4>
-              <div className="flex flex-col gap-1 border-l pl-4">
-                {Object.entries(items).map(([slug, title]) => (
-                  <button
-                    key={slug}
-                    onClick={() => setDoc(slug)}
-                    className={`text-left text-sm text-muted-foreground hover:text-foreground transition-colors ${
-                      doc === slug ? "font-semibold text-primary" : ""
-                    }`}
-                  >
-                    {title}
-                  </button>
-                ))}
-              </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <NavigationHeader
+        onSearchOpen={handleSearchOpen}
+        onNavigate={handleNavigate}
+        currentPage={currentPage}
+      />
+      <SearchDialog isOpen={isSearchOpen} onClose={handleSearchClose} />
+
+      {currentPage === "home" ? (
+        <main>
+          <HeroSection onNavigate={handleNavigate} />
+          <FeaturesGrid />
+          <FAQSection />
+          <CTA onNavigate={handleNavigate} />
+        </main>
+      ) : (
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="w-full md:w-64">
+              <DocsSidebar activeDoc={activeDoc} setActiveDoc={setActiveDoc} />
             </div>
-          ))}
-        </nav>
-      </div>
-    </aside>
-  );
-};
-
-const DocsContent = ({ doc }) => {
-  const docs = {
-    introduction: (
-      <article className="prose prose-stone dark:prose-invert max-w-none">
-        <h1>Introduction</h1>
-        <p>
-          CodeScribe is a VS Code extension designed to minimize the friction of
-          writing about your code. It uses large language models to analyze your
-          staged Git changes and generate high-quality text for your commits,
-          pull requests, and more.
-        </p>
-        <p>
-          This documentation will guide you through the setup and usage of all
-          its features, helping you integrate AI seamlessly into your
-          development workflow.
-        </p>
-      </article>
-    ),
-    installation: (
-      <article className="prose prose-stone dark:prose-invert max-w-none">
-        <h1>Installation</h1>
-        <p>
-          You can install CodeScribe directly from the Visual Studio Marketplace
-          for the most stable experience. For development or testing purposes,
-          you can also sideload the extension.
-        </p>
-        <h3>From Marketplace</h3>
-        <p>1. Open the Extensions view in VS Code.</p>
-        <p>2. Search for "CodeScribe".</p>
-        <p>3. Click "Install".</p>
-        <h3>Sideloading from VSIX</h3>
-        <p>
-          If you have packaged the extension into a <code>.vsix</code> file, you
-          can install it manually:
-        </p>
-        <div className="bg-muted rounded-md p-4 font-mono text-sm">
-          <code>
-            vsce package && code --install-extension codescribe-*.vsix
-          </code>
+            <main className="flex-1 min-w-0">
+              <div className="max-w-3xl">
+                <DocsContent activeDoc={activeDoc} />
+              </div>
+            </main>
+          </div>
         </div>
-      </article>
-    ),
-    "commit-messages": (
-      <article className="prose prose-stone dark:prose-invert max-w-none">
-        <h1>Commit Messages</h1>
-        <p>
-          Generating a commit message is the core feature of CodeScribe. After
-          staging your file changes, click the ✨ icon in the CodeScribe sidebar
-          to generate a conventional commit message.
-        </p>
-      </article>
-    ),
-    // Add other doc pages here...
-  };
-
-  return docs[doc] || <div>Page not found.</div>;
-};
-
-const DocsLayout = ({ doc, setDoc, onNavigateToHome }) => (
-  <div className="flex flex-col min-h-screen">
-    <DocsHeader onNavigateToHome={onNavigateToHome} />
-    <div className="container mx-auto flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
-      <DocsSidebar doc={doc} setDoc={setDoc} />
-      <main className="relative py-6 lg:py-8">
-        <DocsContent doc={doc} />
-      </main>
+      )}
     </div>
-  </div>
-);
-
-// ---------------- MAIN APP COMPONENT ----------------
-// This orchestrates the entire site, simulating routing.
-
-export default function CodeScribeWebsite() {
-  // 'page' state determines if we show 'landing' or 'docs'
-  const [page, setPage] = useState("landing");
-  // 'doc' state determines which documentation article to show
-  const [doc, setDoc] = useState("introduction");
-
-  const navigateToDocs = () => {
-    setPage("docs");
-    // Optionally set a default doc page when navigating
-    setDoc("introduction");
-  };
-
-  const navigateToHome = () => {
-    setPage("landing");
-  };
-
-  if (page === "docs") {
-    return (
-      <DocsLayout doc={doc} setDoc={setDoc} onNavigateToHome={navigateToHome} />
-    );
-  }
-
-  return <LandingPage onNavigateToDocs={navigateToDocs} />;
+  );
 }
