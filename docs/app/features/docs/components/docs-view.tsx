@@ -4,11 +4,12 @@ import { DocsSidebar } from "./docs-sidebar";
 import { DocsContent } from "./docs-content";
 import { ExternalLink } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { TableOfContentsProps, TocItem, TocKey } from "../../landing/types";
 
-const TableOfContents = ({ activeDoc }) => {
-  const [activeSection, setActiveSection] = useState("");
+const TableOfContents: React.FC<TableOfContentsProps> = ({ activeDoc }) => {
+  const [activeSection, setActiveSection] = useState<string>("");
 
-  const tocData = {
+  const tocData: Record<TocKey, TocItem[]> = {
     introduction: [
       { id: "why-codescribe", title: "Why CodeScribe?" },
       { id: "features", title: "Features" },
@@ -29,7 +30,7 @@ const TableOfContents = ({ activeDoc }) => {
     ],
   };
 
-  const currentToc = tocData[activeDoc] || [];
+  const currentToc: TocItem[] = tocData[activeDoc as TocKey] ?? [];
 
   return (
     <div className="fixed top-16 right-16 z-30 hidden xl:block w-64 h-[calc(100vh-4rem)]">
@@ -37,7 +38,7 @@ const TableOfContents = ({ activeDoc }) => {
         <div className="space-y-4">
           <h4 className="font-semibold text-sm">On this page</h4>
           <nav className="space-y-2">
-            {currentToc.map((item) => (
+            {currentToc.map((item: TocItem) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
@@ -63,7 +64,12 @@ const TableOfContents = ({ activeDoc }) => {
     </div>
   );
 };
-const DocsView = ({ activeDoc, setActiveDoc }) => {
+interface DocsViewProps {
+  activeDoc: string;
+  setActiveDoc: (doc: string) => void;
+}
+
+const DocsView: React.FC<DocsViewProps> = ({ activeDoc, setActiveDoc }) => {
   return (
     <div className="flex h-full overflow-hidden">
       {/* Sidebar */}
@@ -73,7 +79,7 @@ const DocsView = ({ activeDoc, setActiveDoc }) => {
       {/* Main Content */}
       <main className="flex-1 h-fit w-full border-l overflow-y-auto min-w-0 xl:pr-80">
         <div className="container max-w-4xl px-6 py-8 md:px-8 lg:px-12">
-          <DocsContent activeDoc={activeDoc} />
+          <DocsContent activeDoc={activeDoc as TocKey} />
         </div>
       </main>
 

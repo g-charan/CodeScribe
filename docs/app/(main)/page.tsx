@@ -18,8 +18,12 @@ import { FeaturesGrid } from "@/app/features/landing/components/feature-grid";
 import { FAQSection } from "@/app/features/landing/components/faq";
 import DocsView from "@/app/features/docs/components/docs-view";
 
+type NavigationProps = {
+  onNavigate: (page: string) => void;
+};
+
 // Landing Page Components
-const HeroSection = ({ onNavigate }) => (
+const HeroSection = ({ onNavigate }: NavigationProps) => (
   <section className="container mx-auto px-4 py-24 md:py-32">
     <div className="max-w-4xl mx-auto text-center space-y-8">
       <div className="space-y-4">
@@ -57,7 +61,7 @@ const HeroSection = ({ onNavigate }) => (
   </section>
 );
 
-const CTA = ({ onNavigate }) => (
+const CTA = ({ onNavigate }: NavigationProps) => (
   <section className="container mx-auto px-4 py-24">
     <div className="max-w-4xl mx-auto text-center space-y-8">
       <div className="space-y-4">
@@ -94,7 +98,7 @@ export default function CodeScribeLanding() {
   const [activeDoc, setActiveDoc] = useState("introduction");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const handleNavigate = (page) => {
+  const handleNavigate = (page: string) => {
     setCurrentPage(page);
     if (page === "docs") {
       setActiveDoc("introduction");
@@ -107,7 +111,7 @@ export default function CodeScribeLanding() {
 
   // Handle keyboard shortcut for search
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
         setIsSearchOpen(true);

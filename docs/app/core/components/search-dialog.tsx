@@ -4,9 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Command, Search } from "lucide-react";
 import { ChevronRight } from "lucide-react";
 import { BookOpen } from "lucide-react";
-export const SearchDialog = ({ isOpen, onClose }) => {
+type SearchResult = { title: string; type: string; path: string };
+
+type SearchDialogProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export const SearchDialog = ({ isOpen, onClose }: SearchDialogProps) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   const mockResults = [
     { title: "Getting Started", type: "Guide", path: "introduction" },

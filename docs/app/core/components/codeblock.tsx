@@ -3,7 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, Terminal } from "lucide-react";
 import { useState } from "react";
 
-export const CodeBlock = ({ children, language = "bash", title }) => (
+type CodeBlockProps = {
+  children: string;
+  language?: string;
+  title?: string;
+};
+
+type CopyButtonProps = {
+  code: string;
+};
+
+export const CodeBlock = ({
+  children,
+  language = "bash",
+  title,
+}: CodeBlockProps) => (
   <div className="group relative">
     {title && (
       <div className="flex items-center gap-2 px-4 py-2 border-b bg-muted/50 text-sm font-mono">
@@ -20,7 +34,7 @@ export const CodeBlock = ({ children, language = "bash", title }) => (
   </div>
 );
 
-const CopyButton = ({ code }) => {
+const CopyButton = ({ code }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {

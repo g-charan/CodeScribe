@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Command, Github, Search } from "lucide-react";
+import { NavigationHeaderProps } from "../types";
 
 const CodeScribeLogo = ({ className = "h-6 w-6", variant = "default" }) => (
   <div className="flex items-center gap-2">
@@ -36,7 +37,12 @@ const CodeScribeLogo = ({ className = "h-6 w-6", variant = "default" }) => (
 );
 
 // Navigation Components
-export const NavigationHeader = ({ onSearchOpen, onNavigate, currentPage }) => (
+
+export const NavigationHeader = ({
+  onSearchOpen,
+  onNavigate,
+  currentPage,
+}: NavigationHeaderProps) => (
   <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
     <div className="container mx-auto flex h-16 items-center">
       <div className="mr-4 hidden md:flex">

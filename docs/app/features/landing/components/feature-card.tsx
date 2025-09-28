@@ -8,13 +8,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
+import { FeatureCardProps } from "../types";
+
 export const FeatureCard = ({
   icon: Icon,
   title,
   description,
   href,
   badge,
-}) => (
+}: FeatureCardProps) => (
   <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 border-muted/50 hover:border-primary/20">
     <CardHeader>
       <div className="flex items-center justify-between">

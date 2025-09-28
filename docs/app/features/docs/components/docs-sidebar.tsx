@@ -2,7 +2,12 @@
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 
-export const DocsSidebar = ({ activeDoc, setActiveDoc }) => {
+interface DocsSidebarProps {
+  activeDoc: string;
+  setActiveDoc: (id: string) => void;
+}
+
+export const DocsSidebar = ({ activeDoc, setActiveDoc }: DocsSidebarProps) => {
   const navigation = [
     {
       title: "Getting Started",

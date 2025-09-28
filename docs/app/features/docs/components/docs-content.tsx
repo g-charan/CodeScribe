@@ -4,9 +4,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FeatureCard } from "../../landing/components/feature-card";
 import { Check, Globe, Settings, Sparkles, Zap } from "lucide-react";
 import { CodeBlock } from "@/app/core/components/codeblock";
+import { TocKey } from "../../landing/types";
+
+interface DocsContentProps {
+  activeDoc: TocKey;
+}
 
 // Documentation Content
-export const DocsContent = ({ activeDoc }) => {
+export const DocsContent = ({ activeDoc }: DocsContentProps) => {
   const docs = {
     introduction: (
       <div className="space-y-6">
