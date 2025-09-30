@@ -73,9 +73,12 @@ const CTA = ({ onNavigate }: NavigationProps) => (
         <Button
           size="lg"
           onClick={() => onNavigate("docs")}
+          asChild
           className="text-base px-8"
         >
-          Install Now
+          <a href="/app/codescribe-0.0.14.vsix" download>
+            Install Now
+          </a>
         </Button>
         <Button size="lg" variant="outline" asChild className="text-base px-8">
           <a
