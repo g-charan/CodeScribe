@@ -82,7 +82,7 @@ const CTA = ({ onNavigate }: NavigationProps) => (
         </Button>
         <Button size="lg" variant="outline" asChild className="text-base px-8">
           <a
-            href="https://github.com/your-repo/codescribe"
+            href="https://github.com/g-charan/CodeScribe"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -92,7 +92,7 @@ export const NavigationHeader = ({
 
         <Button variant="ghost" size="sm" asChild>
           <a
-            href="https://github.com/your-repo/codescribe"
+            href="https://github.com/g-charan/CodeScribe"
             target="_blank"
             rel="noopener noreferrer"
           >
